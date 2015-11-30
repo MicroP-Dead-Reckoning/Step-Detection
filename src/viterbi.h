@@ -5,5 +5,5 @@
 #define V_DEF 4
 #define N_OBS_TAKEN 20
 
-int viterbi_update(float* data);
+int viterbi_update(float* data, int data_len);
 #endif //__INCLUDE_VITERBI_H__

@@ -12,15 +12,15 @@ typedef struct {
 } hmm_desc;
 
 int ViterbiUpdate_c(float* viterbi_in, float* viterbi_out, int obs, hmm_desc *model);
-int Viterbi_C(float* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm);
+int Viterbi_C(int* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm);
 
 float states[N_OBS_TAKEN+1][2*S_DEF];
 float EstimatedStates[N_OBS_TAKEN];
 int acceleratometer_observations[9];
 int acceleratometer_states[9];
 
-float alpha1 = 0.7;
-float alpha2 = 0.8;
+float alpha1 = 7;
+float alpha2 = 15;
 
 int N[3] = {3, 3, 3};
 
@@ -81,11 +81,11 @@ int ReadAccelerometer(float* data, int data_len, int* observation, int* nObs) {
 				observation[*nObs] = z;
 				last_entry = z;
 				(*nObs)++;
-				printf("%d\t", last_entry);
+				//printf("%d\t", last_entry);
 			}
 		}
 	}
-	printf("\n");
+	//printf("\n");
 	return 0;
 }
 /*!
@@ -98,12 +98,17 @@ There were various test cases which we did in the demo. We simply commented out
 each test case instead of deleting them.
 
 */
-int viterbi_update(float* data)
+int viterbi_update(float* data, int data_len)
 {	
-	int EstimatedStates[N_OBS_TAKEN];
-	printf("ESTIMATED STATES TEST 1\n");
-	printf("=======================\n");
-	Viterbi_C(data, N_OBS_TAKEN, EstimatedStates, &hmm);
+	int EstimatedStates[data_len+1];
+	int nObs;
+	int Observations[data_len];
+//	printf("Accelerometer\n");
+//	printf("=============\n");
+	ReadAccelerometer(data, data_len, Observations, &nObs);
+//	printf("ESTIMATED STATES TEST 1\n");
+//	printf("=======================\n");
+	Viterbi_C(Observations, nObs, EstimatedStates, &hmm);
 	return 0;
 }
 
@@ -113,7 +118,7 @@ int viterbi_update(float* data)
 	\param EstimatedStates output containing the EstimatedStates at all times
 	\param HMM hidden markov model used for data input
 */
-int Viterbi_C(float* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm) {
+int Viterbi_C(int* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm) {
 	// determine starting states
 	for (int i =0; i < hmm->S; i++) {
 		states[0][2*i] = hmm->prior[i] * hmm->emission[i][Observations[0]];

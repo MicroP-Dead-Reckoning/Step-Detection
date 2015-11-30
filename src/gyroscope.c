@@ -8,6 +8,7 @@
 #include "lsm9ds1.h"
 #include "moving_average.h"
 #include "osObjects.h"
+#include "viterbi.h"
 
 #define NUM_CALIBRATION 100
 #define X_OFFSET 50
@@ -16,7 +17,7 @@
 #define Z_OFFSET 10
 #define G_SCALER 1.841f
 #define PI 3.14159265358979323846
-#define buffer_size 40
+#define buffer_size 20
 #define DT 0.010000
 
 float G_YAW_OFFSET;
@@ -150,6 +151,7 @@ void EXTI0_IRQHandler(void) {
 }
 
 void Gyroscope(void const *argument) {
+	int ct = 0;
 	while(1) {
 		osSignalWait(SIGNAL_GYROSCOPE, osWaitForever);
 		//TODO: update_acc();
@@ -190,7 +192,6 @@ void Gyroscope(void const *argument) {
 
 		g_pitch = add_value(&g_pitch_buffer, g_out[0]);
 		g_roll = add_value(&g_roll_buffer, g_out[1]);
-		
 		g_yaw = add_value(&g_yaw_buffer, g_out[2]);
 		
 		
@@ -238,8 +239,10 @@ void Gyroscope(void const *argument) {
 			calculate_gyro_offsets();
 		}
 		
-		printf("Roll: %f\n", g_roll);
-	
+		//printf("Roll, %f,,\n", g_roll);
+		if ((ct++ % 10) == 0) {
+			viterbi_update(g_roll_buffer.buffer, 10);
+		}
 	}
 }
 
