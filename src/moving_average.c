@@ -5,13 +5,13 @@
 	adds a value to the filter
 	@param f value to be added to buffer
  */
-int add_value(FilterBuffer *buf, float f) {
-	buf->sum -= buf->buffer[buf->replace % BUFF_SIZE];
-	buf->sum += (buf->buffer[buf->replace % BUFF_SIZE] = f);
-	buf->avg = buf->replace++ < BUFF_SIZE 
+float add_value(FilterBuffer *buf, float f) {
+	buf->sum -= buf->buffer[buf->replace % buf->size];
+	buf->sum += (buf->buffer[buf->replace % buf->size] = f);
+	buf->avg = buf->replace++ < buf->size 
 											? buf->sum/buf->replace 
-											: buf->sum/BUFF_SIZE;
-	return 0;
+											: buf->sum/buf->size;
+	return buf->avg;
 }
 
 /*!

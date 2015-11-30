@@ -5,7 +5,8 @@
 #define BUFF_SIZE 10
 
 typedef struct {
-	float buffer[BUFF_SIZE];
+	int size;
+	float* buffer;
 	int replace;
 	float avg;
 	float sum;
@@ -14,7 +15,7 @@ typedef struct {
 /*!
 	adds a value to the filter
  */
-int add_value(FilterBuffer *buf, float f);
+float add_value(FilterBuffer *buf, float f);
 
 /*!
 	returns average value
