@@ -152,7 +152,8 @@ void EXTI0_IRQHandler(void) {
 void Gyroscope(void const *argument) {
 	while(1) {
 		osSignalWait(SIGNAL_GYROSCOPE, osWaitForever);
-	
+		//TODO: update_acc();
+		//TODO: update_gyroscope();
 		int32_t result[3];
 
 		LSM9DS1_ReadXL(xl_out);
@@ -189,6 +190,7 @@ void Gyroscope(void const *argument) {
 
 		g_pitch = add_value(&g_pitch_buffer, g_out[0]);
 		g_roll = add_value(&g_roll_buffer, g_out[1]);
+		
 		g_yaw = add_value(&g_yaw_buffer, g_out[2]);
 		
 		

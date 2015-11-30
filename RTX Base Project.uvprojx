@@ -423,16 +423,6 @@
               <FilePath>.\src\fputc_debug.c</FilePath>
             </File>
             <File>
-              <FileName>temperature.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\temperature.c</FilePath>
-            </File>
-            <File>
-              <FileName>temperature.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\temperature.h</FilePath>
-            </File>
-            <File>
               <FileName>moving_average.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\src\moving_average.h</FilePath>
@@ -443,39 +433,19 @@
               <FilePath>.\src\moving_average.c</FilePath>
             </File>
             <File>
-              <FileName>accelerometer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\accelerometer.c</FilePath>
-            </File>
-            <File>
-              <FileName>accelerometer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\accelerometer.h</FilePath>
-            </File>
-            <File>
-              <FileName>seven_segment_display.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\seven_segment_display.h</FilePath>
-            </File>
-            <File>
-              <FileName>seven_segment_display.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\seven_segment_display.c</FilePath>
-            </File>
-            <File>
               <FileName>osObjects.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\src\osObjects.h</FilePath>
             </File>
             <File>
-              <FileName>keypad.c</FileName>
+              <FileName>gyroscope.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\keypad.c</FilePath>
+              <FilePath>.\src\gyroscope.c</FilePath>
             </File>
             <File>
-              <FileName>keypad.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\keypad.h</FilePath>
+              <FileName>viterbi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\viterbi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -491,6 +461,11 @@
               <FileName>lis302dl.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Accelerometer_Drivers\src\lis302dl.c</FilePath>
+            </File>
+            <File>
+              <FileName>lsm9ds1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Accelerometer_Drivers\src\lsm9ds1.c</FilePath>
             </File>
           </Files>
         </Group>
