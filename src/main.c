@@ -11,8 +11,12 @@
 #include "gyroscope.h"
 
 osThreadId gyroscope_thread;
+osThreadId update_dir;
+osThreadId update_xy;
 
 osThreadDef(Gyroscope, osPriorityNormal, 1, 0);
+//osThreadDef();
+//osThreadDef();
 
 /*
  * main: initialize and start the system
