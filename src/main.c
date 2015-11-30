@@ -10,14 +10,21 @@
 
 #include "gyroscope.h"
 
+osThreadId gyroscope_thread;
+
+osThreadDef(Gyroscope, osPriorityNormal, 1, 0);
+
 /*
  * main: initialize and start the system
  */
  int main (void) {
   osKernelInitialize ();                    // initialize CMSIS-RTOS
 	init_gyroscope();
-	EXTI_GenerateSWInterrupt(EXTI_Line0); 
+	for (uint32_t i = 0; i < 16800000; i++);
+	 
+	gyroscope_thread = osThreadCreate(osThread(Gyroscope), NULL);
+	
+	EXTI_GenerateSWInterrupt(EXTI_Line0);
 	osKernelStart ();                         // start thread execution 
 }
-
 

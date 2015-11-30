@@ -20,28 +20,17 @@
 
 //signal values for signaling
 typedef enum SIGNALS{
-	SIGNAL_KEYPAD = 0x0001,
+	SIGNAL_GYROSCOPE = 0x0001,
 	SIGNAL_TEMP_ACCEL = 0x0002,
 	SIGNAL_ACCELEROMETER = 0x0003,
 	SIGNAL_DISPLAY = 0x0004
 }SIGNALS;
 
-//enum for what to display
-typedef enum TO_DISPLAY{
-	TEMP,
-	ACCEL
-}TO_DISPLAY;
-//variable for enum
-extern TO_DISPLAY to_display;
-
 // global 'thread' functions ---------------------------------------------------
 /* 
 */
 
-extern osThreadId temperature_thread;
-extern osThreadId accelerometer_thread;
-extern osThreadId display_thread;
-extern osThreadId keypad_thread;
+extern osThreadId gyroscope_thread;
 
 
 #endif  // __osObjects

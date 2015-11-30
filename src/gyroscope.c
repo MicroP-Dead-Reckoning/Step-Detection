@@ -7,6 +7,7 @@
 
 #include "lsm9ds1.h"
 #include "moving_average.h"
+#include "osObjects.h"
 
 #define NUM_CALIBRATION 100
 #define X_OFFSET 50
@@ -22,7 +23,7 @@ float G_YAW_OFFSET;
 float G_PITCH_OFFSET;
 float G_ROLL_OFFSET;
 
-int32_t xl_out[3], g_out[3];
+int32_t xl_out[10], g_out[10];
 int32_t past_g_out_pitch[3], past_g_out_roll[3], past_g_out_yaw[3];
 float roll, pitch;
 
@@ -82,7 +83,7 @@ void init_gyroscope() {
 	/* setup exti */
 	
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE); //CHANGE?
-   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE); // Enable 
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE); // Enable 
 
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource0);
 
@@ -104,7 +105,7 @@ void init_gyroscope() {
 	nvic_init.NVIC_IRQChannelSubPriority = 0x01;
 
 	NVIC_Init(&nvic_init);
-	calculate_gyro_offsets();
+	//calculate_gyro_offsets();
 	
 	/* setup filters */
 	x_buffer.buffer = x_data;
@@ -143,6 +144,7 @@ void calculate_gyro_offsets(void){
 void EXTI0_IRQHandler(void) {
     /* Make sure that interrupt flag is set */
 		static int counter = 0;
+	osSignalSet(gyroscope_thread, SIGNAL_GYROSCOPE);
     if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 			int32_t result[3];
 			EXTI_ClearITPendingBit(EXTI_Line0); 			/* Clear interrupt flag */
@@ -238,3 +240,11 @@ void EXTI0_IRQHandler(void) {
 			printf("Roll: %f\n", g_roll);
     }
 }
+
+void Gyroscope(void const *argument) {
+	while(1) {
+		osSignalWait(SIGNAL_GYROSCOPE, osWaitForever);
+		printf("In a thread!\n");
+	}
+}
+
