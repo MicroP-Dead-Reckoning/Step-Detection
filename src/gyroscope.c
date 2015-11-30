@@ -143,108 +143,101 @@ void calculate_gyro_offsets(void){
 
 void EXTI0_IRQHandler(void) {
     /* Make sure that interrupt flag is set */
-		static int counter = 0;
-	osSignalSet(gyroscope_thread, SIGNAL_GYROSCOPE);
+		osSignalSet(gyroscope_thread, SIGNAL_GYROSCOPE);
     if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
-			int32_t result[3];
 			EXTI_ClearITPendingBit(EXTI_Line0); 			/* Clear interrupt flag */
-			LSM9DS1_ReadXL(xl_out);
-			result[0] = xl_out[0];
-			result[1] = xl_out[1];
-			result[2] = xl_out[2];
-			//printf("x: %d y:%d z:%d \n", result[0], result[1], result[2]);
-
-			result[0] = result[0] + X_OFFSET;
-			result[1] = result[1] + Y_OFFSET;
-			result[2] = result[2] + Z_OFFSET;
-			
-			//printf(" Corrected x: %d y:%d z:%d \n", result[0], result[1], result[2]);
-
-			float x_value = add_value(&x_buffer, result[0]);
-			float y_value = add_value(&y_buffer, result[1]);
-			float z_value = add_value(&z_buffer, result[2]);
-
-			roll = (180/PI) * atan(x_value/sqrt(pow(y_value, 2) + pow(z_value, 2)));		//Uses pitch equation
-			pitch = (-180/PI) * atan(y_value/sqrt(pow(x_value, 2) + pow(z_value, 2)));		//Uses roll equation, "-180" as it is opposite of printed axes
-			//roll = roll + 90;	//Changes range from -90:90 to 0:180
-
-			
-			LSM9DS1_ReadG(g_out);
-			
-			
-			g_out[0] = (g_out[0] >> 11);
-			g_out[1] = (g_out[1] >> 11);
-			g_out[2] = (g_out[2] >> 11);
-			
-			float g_pitch = g_out[0];
-			float g_roll = g_out[1];
-			float g_yaw = g_out[2];
-
-			g_pitch = add_value(&g_pitch_buffer, g_out[0]);
-			g_roll = add_value(&g_roll_buffer, g_out[1]);
-			g_yaw = add_value(&g_yaw_buffer, g_out[2]);
-			
-			
-			g_pitch -= G_PITCH_OFFSET;
-			g_roll -= G_ROLL_OFFSET;
-			
-			
-			if(g_yaw > 0){
-				g_yaw -= G_YAW_OFFSET;
-			}
-			else{
-				g_yaw += G_YAW_OFFSET;	
-			}
-			
-			//Scale output before output
-			g_pitch = g_pitch * G_SCALER;
-			g_roll = g_roll * G_SCALER;
-			g_yaw = g_yaw* G_SCALER;
-			
-			g_pitch_sum = g_pitch_sum + (DT/6)*(past_g_out_pitch[0] + 2*past_g_out_pitch[1] + 2*past_g_out_pitch[2] + g_pitch);
-			g_roll_sum = g_roll_sum + (DT/6)*(past_g_out_roll[0] + 2*past_g_out_roll[1] + 2*past_g_out_roll[2] + g_roll);
-			g_yaw_sum = g_yaw_sum + (DT/6)*(past_g_out_yaw[0] + 2*past_g_out_yaw[1] + 2*past_g_out_yaw[2] + g_yaw);
-
-			
-			if(counter <3)
-			{
-				past_g_out_pitch[counter] = g_pitch;
-				past_g_out_roll[counter] = g_roll;
-				past_g_out_yaw[counter] = g_yaw;
-				counter++;
-			}
-			else{
-				past_g_out_pitch[0] = past_g_out_pitch[1];
-				past_g_out_pitch[1] = past_g_out_pitch[2];
-				past_g_out_pitch[2] = g_pitch;
-				
-				past_g_out_roll[0] = past_g_out_roll[1];
-				past_g_out_roll[1] = past_g_out_roll[2];
-				past_g_out_roll[2] = g_roll;
-				
-				past_g_out_yaw[0] = past_g_out_yaw[1];
-				past_g_out_yaw[1] = past_g_out_yaw[2];
-				past_g_out_yaw[2] = g_yaw;
-			}			
-
-			combined_roll = 0.5f * g_roll_sum + 0.5f * roll;
-			combined_pitch = 0.5f * g_pitch_sum + 0.5f * pitch;
-
-			if(g_yaw_sum == 0){
-				G_YAW_OFFSET = 0;
-				G_PITCH_OFFSET = 0;
-				G_ROLL_OFFSET = 0;
-				calculate_gyro_offsets();
-			}
-			
-			printf("Roll: %f\n", g_roll);
     }
 }
 
 void Gyroscope(void const *argument) {
 	while(1) {
 		osSignalWait(SIGNAL_GYROSCOPE, osWaitForever);
-		printf("In a thread!\n");
+	
+		int32_t result[3];
+
+		LSM9DS1_ReadXL(xl_out);
+		result[0] = xl_out[0];
+		result[1] = xl_out[1];
+		result[2] = xl_out[2];
+		//printf("x: %d y:%d z:%d \n", result[0], result[1], result[2]);
+
+		result[0] = result[0] + X_OFFSET;
+		result[1] = result[1] + Y_OFFSET;
+		result[2] = result[2] + Z_OFFSET;
+		
+		//printf(" Corrected x: %d y:%d z:%d \n", result[0], result[1], result[2]);
+
+		float x_value = add_value(&x_buffer, result[0]);
+		float y_value = add_value(&y_buffer, result[1]);
+		float z_value = add_value(&z_buffer, result[2]);
+
+		roll = (180/PI) * atan(x_value/sqrt(pow(y_value, 2) + pow(z_value, 2)));		//Uses pitch equation
+		pitch = (-180/PI) * atan(y_value/sqrt(pow(x_value, 2) + pow(z_value, 2)));		//Uses roll equation, "-180" as it is opposite of printed axes
+		//roll = roll + 90;	//Changes range from -90:90 to 0:180
+
+		
+		LSM9DS1_ReadG(g_out);
+		
+		
+		g_out[0] = (g_out[0] >> 11);
+		g_out[1] = (g_out[1] >> 11);
+		g_out[2] = (g_out[2] >> 11);
+		
+		float g_pitch = g_out[0];
+		float g_roll = g_out[1];
+		float g_yaw = g_out[2];
+
+		g_pitch = add_value(&g_pitch_buffer, g_out[0]);
+		g_roll = add_value(&g_roll_buffer, g_out[1]);
+		g_yaw = add_value(&g_yaw_buffer, g_out[2]);
+		
+		
+		g_pitch -= G_PITCH_OFFSET;
+		g_roll -= G_ROLL_OFFSET;
+		
+		
+		if(g_yaw > 0){
+			g_yaw -= G_YAW_OFFSET;
+		}
+		else{
+			g_yaw += G_YAW_OFFSET;	
+		}
+		
+		//Scale output before output
+		g_pitch = g_pitch * G_SCALER;
+		g_roll = g_roll * G_SCALER;
+		g_yaw = g_yaw* G_SCALER;
+		
+		g_pitch_sum = g_pitch_sum + (DT/6)*(past_g_out_pitch[0] + 2*past_g_out_pitch[1] + 2*past_g_out_pitch[2] + g_pitch);
+		g_roll_sum = g_roll_sum + (DT/6)*(past_g_out_roll[0] + 2*past_g_out_roll[1] + 2*past_g_out_roll[2] + g_roll);
+		g_yaw_sum = g_yaw_sum + (DT/6)*(past_g_out_yaw[0] + 2*past_g_out_yaw[1] + 2*past_g_out_yaw[2] + g_yaw);
+
+		
+
+		past_g_out_pitch[0] = past_g_out_pitch[1];
+		past_g_out_pitch[1] = past_g_out_pitch[2];
+		past_g_out_pitch[2] = g_pitch;
+		
+		past_g_out_roll[0] = past_g_out_roll[1];
+		past_g_out_roll[1] = past_g_out_roll[2];
+		past_g_out_roll[2] = g_roll;
+		
+		past_g_out_yaw[0] = past_g_out_yaw[1];
+		past_g_out_yaw[1] = past_g_out_yaw[2];
+		past_g_out_yaw[2] = g_yaw;
+
+		combined_roll = 0.5f * g_roll_sum + 0.5f * roll;
+		combined_pitch = 0.5f * g_pitch_sum + 0.5f * pitch;
+
+		if(g_yaw_sum == 0){
+			G_YAW_OFFSET = 0;
+			G_PITCH_OFFSET = 0;
+			G_ROLL_OFFSET = 0;
+			calculate_gyro_offsets();
+		}
+		
+		printf("Roll: %f\n", g_roll);
+	
 	}
 }
 
