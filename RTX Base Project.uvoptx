@@ -77,7 +77,11 @@
         <tvExpOptDlg>0</tvExpOptDlg>
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
+<<<<<<< HEAD
       <CpuCode>18</CpuCode>
+=======
+      <CpuCode>255</CpuCode>
+>>>>>>> github/master
       <Books>
         <Book>
           <Number>0</Number>
@@ -225,6 +229,19 @@
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
       <bLintAuto>0</bLintAuto>
+<<<<<<< HEAD
+=======
+      <SystemViewers>
+        <Entry>
+          <Name>OS Support\Event Viewer</Name>
+          <WinId>35904</WinId>
+        </Entry>
+        <Entry>
+          <Name>OS Support\System and Thread Viewer</Name>
+          <WinId>35905</WinId>
+        </Entry>
+      </SystemViewers>
+>>>>>>> github/master
     </TargetOption>
   </Target>
 
@@ -242,6 +259,7 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>.\src\gyroscope.c</PathWithFileName>
       <FilenameWithoutPath>gyroscope.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -255,6 +273,8 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+=======
+>>>>>>> github/master
       <PathWithFileName>.\src\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -262,7 +282,11 @@
     </File>
     <File>
       <GroupNumber>1</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>3</FileNumber>
+=======
+      <FileNumber>2</FileNumber>
+>>>>>>> github/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -275,7 +299,11 @@
     </File>
     <File>
       <GroupNumber>1</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>4</FileNumber>
+=======
+      <FileNumber>3</FileNumber>
+>>>>>>> github/master
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -288,7 +316,11 @@
     </File>
     <File>
       <GroupNumber>1</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>5</FileNumber>
+=======
+      <FileNumber>4</FileNumber>
+>>>>>>> github/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -301,7 +333,11 @@
     </File>
     <File>
       <GroupNumber>1</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>6</FileNumber>
+=======
+      <FileNumber>5</FileNumber>
+>>>>>>> github/master
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -314,6 +350,7 @@
     </File>
     <File>
       <GroupNumber>1</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>7</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
@@ -328,11 +365,15 @@
     <File>
       <GroupNumber>1</GroupNumber>
       <FileNumber>8</FileNumber>
+=======
+      <FileNumber>6</FileNumber>
+>>>>>>> github/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>.\src\update_pos.c</PathWithFileName>
       <FilenameWithoutPath>update_pos.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -361,6 +402,10 @@
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\update_pos.h</PathWithFileName>
       <FilenameWithoutPath>update_pos.h</FilenameWithoutPath>
+=======
+      <PathWithFileName>.\src\gyroscope.c</PathWithFileName>
+      <FilenameWithoutPath>gyroscope.c</FilenameWithoutPath>
+>>>>>>> github/master
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -374,7 +419,11 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>2</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>11</FileNumber>
+=======
+      <FileNumber>7</FileNumber>
+>>>>>>> github/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -387,7 +436,11 @@
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>12</FileNumber>
+=======
+      <FileNumber>8</FileNumber>
+>>>>>>> github/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -400,7 +453,11 @@
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>13</FileNumber>
+=======
+      <FileNumber>9</FileNumber>
+>>>>>>> github/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -414,6 +471,7 @@
   </Group>
 
   <Group>
+<<<<<<< HEAD
     <GroupName>Tests</GroupName>
     <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
@@ -487,6 +545,8 @@
   </Group>
 
   <Group>
+=======
+>>>>>>> github/master
     <GroupName>::CMSIS</GroupName>
     <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>

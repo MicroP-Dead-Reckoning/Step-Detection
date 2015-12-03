@@ -49,6 +49,21 @@ __IO uint32_t  LSM9DS1Timeout = LSM9DS1_FLAG_TIMEOUT;
   * @}
   */
 
+/** @defgroup STM32F4_DISCOVERY_LSM9DS1_Private_Macros
+  * @{
+  */
+
+/**
+  * @}
+  */ 
+  
+/** @defgroup STM32F4_DISCOVERY_LSM9DS1_Private_Variables
+  * @{
+  */ 
+
+/**
+  * @}
+  */
 
 /** @defgroup STM32F4_DISCOVERY_LSM9DS1_Private_FunctionPrototypes
   * @{
@@ -59,6 +74,10 @@ static void LSM9DS1_LowLevel_Init(void);
   * @}
   */
 
+/** @defgroup STM32F4_DISCOVERY_LSM9DS1_Private_Functions
+  * @{
+  */
+
 /**
   * @brief  Set LSM9DS1 Initialization.
   * @param  LSM9DS1_Config_Struct: pointer to a LSM9DS1_Config_TypeDef structure 
@@ -67,6 +86,10 @@ static void LSM9DS1_LowLevel_Init(void);
   */
 void LSM9DS1_Init(LSM9DS1_InitTypeDef *LSM9DS1_InitStruct)
 {
+
+
+//	LSM9DS1_Read(&who_am_i, LSM9DS1_WHO_AM_I_ADDR, 1);
+	//printf("WHO AM I: %d \n", who_am_i);
   
   /* Configure the low level interface ---------------------------------------*/
   LSM9DS1_LowLevel_Init();
@@ -107,6 +130,7 @@ void LSM9DS1_Init(LSM9DS1_InitTypeDef *LSM9DS1_InitStruct)
 	/* Enable Interrupts on INT1 for Accelerometer and Gyroscope */
 	LSM9DS1_Write(&tmpreg, LSM9DS1_INT1_CTRL, 1);
 }
+
 
 /**
   * @brief  Writes one byte to the LSM9DS1.
@@ -190,7 +214,6 @@ void LSM9DS1_ReadXL(int32_t* out)
 	
   LSM9DS1_Read(&crtl, LSM9DS1_CTRL_REG6_XL, 1);  //ctrl will recieve the data from the reg
 	
-	//Read axis data
 	LSM9DS1_Read(buffer, LSM9DS1_OUT_X_H_XL, 1);
 	LSM9DS1_Read(buffer+1, LSM9DS1_OUT_X_L_XL, 1);
 	
@@ -254,6 +277,7 @@ void LSM9DS1_ReadG(int32_t* out)
   LSM9DS1_Read(&crtl, LSM9DS1_CTRL_REG1_G, 1);  //ctrl will recieve the data from the reg
 	
 	//Read axis data
+
 	LSM9DS1_Read(buffer, LSM9DS1_OUT_X_H_G, 1);
 	LSM9DS1_Read(buffer+1, LSM9DS1_OUT_X_L_G, 1);
 	

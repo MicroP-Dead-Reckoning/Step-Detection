@@ -9,7 +9,7 @@
 #include "moving_average.h"
 #include "osObjects.h"
 #include "update_pos.h"
-//#include "viterbi.h"
+
 
 #define NUM_CALIBRATION 20
 #define X_OFFSET 50
@@ -44,6 +44,7 @@ float combined_pitch;
 
 int state = 0;
 uint8_t heading_state = 0;
+
 int counter = 0;
 
 typedef struct {
@@ -88,7 +89,6 @@ float yaw_data[buffer_size];
 //char distance[NUM_POSITION_READINGS];
 //int position_reading = 1;
 
-
 /* Helper Functions */
 void calculate_gyro_offsets(void);
 
@@ -119,6 +119,7 @@ void init_gyroscope() {
 	EXTI_InitTypeDef exti_init;
 
 	exti_init.EXTI_Line = EXTI_Line1; //EXTI Line 0
+
 	exti_init.EXTI_LineCmd = ENABLE; //Enable
 	exti_init.EXTI_Mode = EXTI_Mode_Interrupt; //Use for interupts
 	exti_init.EXTI_Trigger = EXTI_Trigger_Rising;
@@ -129,6 +130,7 @@ void init_gyroscope() {
 	NVIC_InitTypeDef nvic_init;
 
 	nvic_init.NVIC_IRQChannel = EXTI1_IRQn; //EXTIO
+
 	nvic_init.NVIC_IRQChannelCmd = ENABLE;
 	nvic_init.NVIC_IRQChannelPreemptionPriority = 0x00;
 	nvic_init.NVIC_IRQChannelSubPriority = 0x01;

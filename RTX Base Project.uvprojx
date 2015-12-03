@@ -369,7 +369,11 @@
               <MiscControls>--c99</MiscControls>
               <Define>HSE_VALUE=8000000 USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
+<<<<<<< HEAD
               <IncludePath>.\src;.\inc;.\Accelerometer_Drivers\inc; .\tests</IncludePath>
+=======
+              <IncludePath>.\src;.\inc;.\Accelerometer_Drivers\inc</IncludePath>
+>>>>>>> github/master
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,11 +417,14 @@
           <GroupName>src</GroupName>
           <Files>
             <File>
+<<<<<<< HEAD
               <FileName>gyroscope.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\gyroscope.c</FilePath>
             </File>
             <File>
+=======
+>>>>>>> github/master
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\main.c</FilePath>
@@ -443,6 +450,7 @@
               <FilePath>.\src\osObjects.h</FilePath>
             </File>
             <File>
+<<<<<<< HEAD
               <FileName>cc2500.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\cc2500.c</FilePath>
@@ -461,6 +469,11 @@
               <FileName>update_pos.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\src\update_pos.h</FilePath>
+=======
+              <FileName>gyroscope.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\gyroscope.c</FilePath>
+>>>>>>> github/master
             </File>
           </Files>
         </Group>
@@ -485,6 +498,7 @@
           </Files>
         </Group>
         <Group>
+<<<<<<< HEAD
           <GroupName>Tests</GroupName>
           <Files>
             <File>
@@ -515,6 +529,8 @@
           </Files>
         </Group>
         <Group>
+=======
+>>>>>>> github/master
           <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
