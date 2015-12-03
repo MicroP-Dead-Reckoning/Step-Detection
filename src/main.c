@@ -17,7 +17,8 @@ osThreadDef(Gyroscope, osPriorityNormal, 1, 0);
 /*
  * main: initialize and start the system
  */
- int main (void) {
+
+int main (void) {
   osKernelInitialize ();                    // initialize CMSIS-RTOS
 	init_gyroscope();
 	for (uint32_t i = 0; i < 16800000; i++);

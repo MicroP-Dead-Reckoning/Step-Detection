@@ -10,15 +10,17 @@
 #include "osObjects.h"
 //#include "viterbi.h"
 
-#define NUM_CALIBRATION 100
+#define NUM_CALIBRATION 20
 #define X_OFFSET 50
 #define Y_OFFSET 10 //-50.665001
-
 #define Z_OFFSET 10
-#define G_SCALER 1.841f
+
+#define G_SCALER 2.0553f
 #define PI 3.14159265358979323846
-#define buffer_size 20
-#define DT 0.010000
+
+#define buffer_size 40
+#define DT 0.0084033613
+
 
 #define STEP_DELAY 30
 #define RISING_STEP_THRESHOLD 15
@@ -28,7 +30,7 @@ float G_YAW_OFFSET;
 float G_PITCH_OFFSET;
 float G_ROLL_OFFSET;
 
-int32_t xl_out[10], g_out[10];
+int32_t xl_out[3], g_out[3];
 int32_t past_g_out_pitch[3], past_g_out_roll[3], past_g_out_yaw[3];
 float roll, pitch;
 
@@ -38,6 +40,10 @@ float g_yaw_sum = 0;
 
 float combined_roll;
 float combined_pitch;
+
+int state = 0;
+int heading_state = 0;
+int counter = 0;
 
 typedef struct {
 	float data[buffer_size];
@@ -82,22 +88,22 @@ void init_gyroscope() {
 	/* initialize gyroscope */
 	LSM9DS1_InitTypeDef xl_g_init;
 
-	xl_g_init.G_Axes_Enable  = LSM9DS1_G_X_ENABLE | LSM9DS1_G_Y_ENABLE | LSM9DS1_G_Z_ENABLE; 
+	xl_g_init.G_Axes_Enable  = LSM9DS1_G_X_ENABLE | LSM9DS1_G_Y_ENABLE | LSM9DS1_G_Z_ENABLE;
 	xl_g_init.G_Full_Scale = LSM9DS1_FS_G_500;
-	xl_g_init.G_Power_Mode_Output_DataRate = LSM9DS1_G_DATARATE_119; 
-	
-	xl_g_init.XL_Axes_Enable = LSM9DS1_X_ENABLE | LSM9DS1_Y_ENABLE | LSM9DS1_Z_ENABLE; 
-	xl_g_init.Full_Scale = LSM9DS1_FULLSCALE_2G; 
-	xl_g_init.Power_Mode_Output_DataRate = LSM9DS1_DATARATE_119; 
+	xl_g_init.G_Power_Mode_Output_DataRate = LSM9DS1_G_DATARATE_119;
+
+	xl_g_init.XL_Axes_Enable = LSM9DS1_X_ENABLE | LSM9DS1_Y_ENABLE | LSM9DS1_Z_ENABLE;
+	xl_g_init.Full_Scale = LSM9DS1_FULLSCALE_2G;
+	xl_g_init.Power_Mode_Output_DataRate = LSM9DS1_DATARATE_119;
 	xl_g_init.Bandwidth_Selection = LSM9DS1_BANDWIDTH_ODR;
 	xl_g_init.Anti_Aliasing_Filter_BW = LSM9DS1_AA_FILTER_408; //Default value anyway
-	
+
 	LSM9DS1_Init(&xl_g_init);
-	
+
 	/* setup exti */
-	
+
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE); //CHANGE?
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE); // Enable 
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE); // Enable
 
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource0);
 
@@ -119,21 +125,21 @@ void init_gyroscope() {
 	nvic_init.NVIC_IRQChannelSubPriority = 0x01;
 
 	NVIC_Init(&nvic_init);
-	//calculate_gyro_offsets();
-	
+	calculate_gyro_offsets();
+
 	/* setup filters */
 	x_buffer.buffer = x_data;
 	y_buffer.buffer = y_data;
 	z_buffer.buffer = z_data;
-	
+
 	x_buffer.size = buffer_size;
 	y_buffer.size = buffer_size;
 	z_buffer.size = buffer_size;
-	
+
 	g_yaw_buffer.buffer = yaw_data;
 	g_roll_buffer.buffer = roll_data;
 	g_pitch_buffer.buffer = pitch_data;
-	
+
 	g_yaw_buffer.size = buffer_size;
 	g_roll_buffer.size = buffer_size;
 	g_pitch_buffer.size = buffer_size;
@@ -143,18 +149,18 @@ void init_gyroscope() {
 }
 
 void calculate_gyro_offsets(void){
-	
-	for(int i=0;i<50;i++){
+
+	for(int i=0;i<NUM_CALIBRATION;i++){
 		LSM9DS1_ReadG(g_out);
 		G_PITCH_OFFSET += (g_out[0] >> 11);
 		G_ROLL_OFFSET += (g_out[1] >> 11);
 		G_YAW_OFFSET += (g_out[2] >> 11);
 //		printf("%d \n", i);
 	}
-	
-		G_PITCH_OFFSET /= 50;
-		G_ROLL_OFFSET /= 50;
-		G_YAW_OFFSET /= 50;
+
+		G_PITCH_OFFSET /= NUM_CALIBRATION;
+		G_ROLL_OFFSET /= NUM_CALIBRATION;
+		G_YAW_OFFSET /= NUM_CALIBRATION;
 	//	printf("Offset :G	 Pitch: %f Roll: %f	Yaw: %f\n", G_PITCH_OFFSET, G_ROLL_OFFSET, G_YAW_OFFSET);
 }
 
@@ -167,11 +173,10 @@ void EXTI0_IRQHandler(void) {
 }
 
 void Gyroscope(void const *argument) {
-	int ct = 0;
 	while(1) {
 		osSignalWait(SIGNAL_GYROSCOPE, osWaitForever);
-		//TODO: update_acc();
-		//TODO: update_gyroscope();
+
+
 		int32_t result[3];
 
 		LSM9DS1_ReadXL(xl_out);
@@ -183,7 +188,7 @@ void Gyroscope(void const *argument) {
 		result[0] = result[0] + X_OFFSET;
 		result[1] = result[1] + Y_OFFSET;
 		result[2] = result[2] + Z_OFFSET;
-		
+
 		//printf(" Corrected x: %d y:%d z:%d \n", result[0], result[1], result[2]);
 
 		float x_value = add_value(&x_buffer, result[0]);
@@ -194,14 +199,12 @@ void Gyroscope(void const *argument) {
 		pitch = (-180/PI) * atan(y_value/sqrt(pow(x_value, 2) + pow(z_value, 2)));		//Uses roll equation, "-180" as it is opposite of printed axes
 		//roll = roll + 90;	//Changes range from -90:90 to 0:180
 
-		
 		LSM9DS1_ReadG(g_out);
-		
-		
+
 		g_out[0] = (g_out[0] >> 11);
 		g_out[1] = (g_out[1] >> 11);
 		g_out[2] = (g_out[2] >> 11);
-		
+
 		float g_pitch = g_out[0];
 		float g_roll = g_out[1];
 		float g_yaw = g_out[2];
@@ -209,57 +212,103 @@ void Gyroscope(void const *argument) {
 		g_pitch = add_value(&g_pitch_buffer, g_out[0]);
 		g_roll = add_value(&g_roll_buffer, g_out[1]);
 		g_yaw = add_value(&g_yaw_buffer, g_out[2]);
-		
-		
+
+
 		g_pitch -= G_PITCH_OFFSET;
 		g_roll -= G_ROLL_OFFSET;
-		
-		
+
+
 		if(g_yaw > 0){
 			g_yaw -= G_YAW_OFFSET;
 		}
 		else{
-			g_yaw += G_YAW_OFFSET;	
+			g_yaw += G_YAW_OFFSET;
 		}
-		
+
 		//Scale output before output
 		g_pitch = g_pitch * G_SCALER;
 		g_roll = g_roll * G_SCALER;
 		g_yaw = g_yaw* G_SCALER;
-		
+
 		g_pitch_sum = g_pitch_sum + (DT/6)*(past_g_out_pitch[0] + 2*past_g_out_pitch[1] + 2*past_g_out_pitch[2] + g_pitch);
 		g_roll_sum = g_roll_sum + (DT/6)*(past_g_out_roll[0] + 2*past_g_out_roll[1] + 2*past_g_out_roll[2] + g_roll);
 		g_yaw_sum = g_yaw_sum + (DT/6)*(past_g_out_yaw[0] + 2*past_g_out_yaw[1] + 2*past_g_out_yaw[2] + g_yaw);
 
-		
 
-		past_g_out_pitch[0] = past_g_out_pitch[1];
-		past_g_out_pitch[1] = past_g_out_pitch[2];
-		past_g_out_pitch[2] = g_pitch;
-		
-		past_g_out_roll[0] = past_g_out_roll[1];
-		past_g_out_roll[1] = past_g_out_roll[2];
-		past_g_out_roll[2] = g_roll;
-		
-		past_g_out_yaw[0] = past_g_out_yaw[1];
-		past_g_out_yaw[1] = past_g_out_yaw[2];
-		past_g_out_yaw[2] = g_yaw;
-
-		combined_roll = 0.5f * g_roll_sum + 0.5f * roll;
-		combined_pitch = 0.5f * g_pitch_sum + 0.5f * pitch;
-
-		if(g_yaw_sum == 0){
-			G_YAW_OFFSET = 0;
-			G_PITCH_OFFSET = 0;
-			G_ROLL_OFFSET = 0;
-			calculate_gyro_offsets();
+		if(counter<3)
+		{
+			past_g_out_pitch[counter] = g_pitch;
+			past_g_out_roll[counter] = g_roll;
+			past_g_out_yaw[counter] = g_yaw;
+			counter++;
 		}
-		
+		else{
+			past_g_out_pitch[0] = past_g_out_pitch[1];
+			past_g_out_pitch[1] = past_g_out_pitch[2];
+			past_g_out_pitch[2] = g_pitch;
+
+			past_g_out_roll[0] = past_g_out_roll[1];
+			past_g_out_roll[1] = past_g_out_roll[2];
+			past_g_out_roll[2] = g_roll;
+
+			past_g_out_yaw[0] = past_g_out_yaw[1];
+			past_g_out_yaw[1] = past_g_out_yaw[2];
+			past_g_out_yaw[2] = g_yaw;
+		}
+
+		if(45<g_yaw_sum){
+				state++;
+				g_yaw_sum = 0;
+			}
+
+		else if(-45>g_yaw_sum){
+			state--;
+			g_yaw_sum = 0;
+		}
+		if(state == 8 || state == -8)
+		{
+			state = 0;
+		}
+
+		//Combine positive and negative states into one
+		if(state == 1 || state == -7)
+		{
+			heading_state = 1;
+		}
+		else if(state == 2 || state == -6)
+		{
+			heading_state = 2;
+		}
+		else if(state == 3 || state == -5)
+		{
+			heading_state = 3;
+		}
+		else if(state == 4 || state == -4)
+		{
+			heading_state = 4;
+		}
+		else if(state == 5 || state == -3)
+		{
+			heading_state = 5;
+		}
+		else if(state == 6 || state == -2)
+		{
+			heading_state = 6;
+		}
+		else if(state == 7 || state == -1)
+		{
+			heading_state = 7;
+		}
+		else if(state == 0)
+		{
+			heading_state = 0;
+		}
+		//printf("Yaw: %f	State: %d \n",g_yaw_sum, heading_state);
 		switch (step) {
 			case STANDING:
 				if (waiting == 0) {
 					if (g_roll > RISING_STEP_THRESHOLD) {
-						printf("stepping\n");
+						//printf("stepping direction %d\n", heading_state);
 						step = STEPPING;
 						waiting = STEP_DELAY;
 					}
@@ -272,7 +321,7 @@ void Gyroscope(void const *argument) {
 				if (waiting == 0) {
 					if (g_roll < FALLING_STEP_THRESHOLD) {
 						step = STANDING;
-						printf("standing\n");
+						//printf("standing %d\n", heading_state);
 						waiting = STEP_DELAY;
 					}
 				}
@@ -281,7 +330,7 @@ void Gyroscope(void const *argument) {
 				}
 				break;
 		}
-		printf("\tRoll, %f,,\n", g_roll);
+		//printf("\tRoll, %f,,\n", g_roll);
+		printf("%s: %d\n", PRINT_STATE[step], heading_state);
 	}
 }
-
