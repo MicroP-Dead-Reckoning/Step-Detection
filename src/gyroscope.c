@@ -8,7 +8,7 @@
 #include "lsm9ds1.h"
 #include "moving_average.h"
 #include "osObjects.h"
-#include "viterbi.h"
+//#include "viterbi.h"
 
 #define NUM_CALIBRATION 100
 #define X_OFFSET 50
@@ -19,6 +19,10 @@
 #define PI 3.14159265358979323846
 #define buffer_size 20
 #define DT 0.010000
+
+#define STEP_DELAY 100
+#define RISING_STEP_THRESHOLD 15
+#define FALLING_STEP_THRESHOLD -15
 
 float G_YAW_OFFSET;
 float G_PITCH_OFFSET;
@@ -42,6 +46,14 @@ typedef struct {
 	int count;
 }filter_state;
 
+typedef enum {
+	STANDING,
+	STEPPING
+} STEP;
+
+STEP step;
+char* PRINT_STATE[] = {"STANDING", "STEPPING"};
+int waiting;
 
 FilterBuffer x_buffer;
 float x_data[buffer_size];
@@ -60,6 +72,7 @@ float roll_data[buffer_size];
 
 FilterBuffer g_yaw_buffer;
 float yaw_data[buffer_size];
+
 
 /* Helper Functions */
 void calculate_gyro_offsets(void);
@@ -124,6 +137,9 @@ void init_gyroscope() {
 	g_yaw_buffer.size = buffer_size;
 	g_roll_buffer.size = buffer_size;
 	g_pitch_buffer.size = buffer_size;
+	
+	step = STANDING;
+	waiting = 0;
 }
 
 void calculate_gyro_offsets(void){
@@ -239,9 +255,36 @@ void Gyroscope(void const *argument) {
 			calculate_gyro_offsets();
 		}
 		
-		//printf("Roll, %f,,\n", g_roll);
+		switch (step) {
+			case STANDING:
+				if (waiting == 0) {
+					if (g_roll > RISING_STEP_THRESHOLD) {
+						printf("stepping\n");
+						step = STEPPING;
+						waiting = STEP_DELAY;
+					}
+				}
+				else {
+					waiting--;
+				}
+				break;
+			case STEPPING:
+				if (waiting == 0) {
+					if (g_roll < FALLING_STEP_THRESHOLD) {
+						step = STANDING;
+						printf("standing\n");
+						waiting = STEP_DELAY;
+					}
+				}
+				else {
+					waiting--;
+				}
+				break;
+		}
+		
+		printf("Roll, %f,,\n", g_roll);
 		if ((ct++ % 10) == 0) {
-			viterbi_update(g_roll_buffer.buffer, 10);
+			//viterbi_update(g_roll_buffer.buffer, 10);
 		}
 	}
 }
