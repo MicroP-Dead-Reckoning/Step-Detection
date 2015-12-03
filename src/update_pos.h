@@ -7,11 +7,9 @@
 #include "cc2500.h"
 #include "gyroscope.h"
 
-#define STEP_SIZE	1		//cm
-
-uint16_t distance = 0;
-uint16_t dist_last = 0;
+uint8_t distance = 0;
+uint8_t dist_last = 0;
 uint8_t dir_last = 0;
 
-void UpdatePos(void const *arguments);
-int sendPos(uint8_t direction);
+
+int send_pos(uint8_t direction);
