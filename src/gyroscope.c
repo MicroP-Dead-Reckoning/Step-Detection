@@ -20,9 +20,9 @@
 #define buffer_size 20
 #define DT 0.010000
 
-#define STEP_DELAY 100
+#define STEP_DELAY 30
 #define RISING_STEP_THRESHOLD 15
-#define FALLING_STEP_THRESHOLD -15
+#define FALLING_STEP_THRESHOLD -10
 
 float G_YAW_OFFSET;
 float G_PITCH_OFFSET;
@@ -281,11 +281,7 @@ void Gyroscope(void const *argument) {
 				}
 				break;
 		}
-		
-		printf("Roll, %f,,\n", g_roll);
-		if ((ct++ % 10) == 0) {
-			//viterbi_update(g_roll_buffer.buffer, 10);
-		}
+		printf("\tRoll, %f,,\n", g_roll);
 	}
 }
 

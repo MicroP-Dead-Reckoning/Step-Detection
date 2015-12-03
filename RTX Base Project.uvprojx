@@ -442,11 +442,6 @@
               <FileType>1</FileType>
               <FilePath>.\src\gyroscope.c</FilePath>
             </File>
-            <File>
-              <FileName>viterbi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\viterbi.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
