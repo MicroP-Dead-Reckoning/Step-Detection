@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "cc2500.h"
 #include "gyroscope.h"
+#include "push_button.h"
 #include "all_wireless_tests.h"
 
 
@@ -32,7 +33,8 @@ int main (void) {
 
 	init_gyroscope();
 	for (uint32_t i = 0; i < 16800000; i++);
-	 
+	setup_button();
+	for (uint32_t i = 0; i < 16800000; i++);
 	gyroscope_thread = osThreadCreate(osThread(Gyroscope), NULL);
 
 	EXTI_GenerateSWInterrupt(EXTI_Line1);
