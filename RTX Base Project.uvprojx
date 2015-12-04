@@ -369,7 +369,7 @@
               <MiscControls>--c99</MiscControls>
               <Define>HSE_VALUE=8000000 USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\src;.\inc;.\Accelerometer_Drivers\inc</IncludePath>
+              <IncludePath>.\src;.\inc;.\Accelerometer_Drivers\inc; .\tests</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,6 +413,11 @@
           <GroupName>src</GroupName>
           <Files>
             <File>
+              <FileName>gyroscope.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\gyroscope.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\main.c</FilePath>
@@ -438,9 +443,24 @@
               <FilePath>.\src\osObjects.h</FilePath>
             </File>
             <File>
-              <FileName>gyroscope.c</FileName>
+              <FileName>cc2500.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\gyroscope.c</FilePath>
+              <FilePath>.\src\cc2500.c</FilePath>
+            </File>
+            <File>
+              <FileName>update_pos.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\update_pos.c</FilePath>
+            </File>
+            <File>
+              <FileName>cc2500.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\cc2500.h</FilePath>
+            </File>
+            <File>
+              <FileName>update_pos.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\update_pos.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -461,6 +481,36 @@
               <FileName>lsm9ds1.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Accelerometer_Drivers\src\lsm9ds1.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Tests</GroupName>
+          <Files>
+            <File>
+              <FileName>all_wireless_tests.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\tests\all_wireless_tests.h</FilePath>
+            </File>
+            <File>
+              <FileName>test_control_read.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\tests\test_control_read.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_read_write.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\tests\test_read_write.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_transmit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\tests\test_transmit.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_wireless.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\tests\test_wireless.c</FilePath>
             </File>
           </Files>
         </Group>

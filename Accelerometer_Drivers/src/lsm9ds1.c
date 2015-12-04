@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
   * @file    stm32f4_discovery_LSM9DS1.c
-  * @author  Taylor Dotsikas, Wei-di Chang
+  * @author  Taylor Dotsikas, Wei-di Chang, inspired by MCD Application Team lis302dl driver
   * @version V1.1.0
   * @date    28-October-2011
   * @brief   This file provides a set of functions needed to manage the LSM9DS1
-  *          MEMS accelerometer available on STM32F4-Discovery Kit.
+  *          MEMS accelerometer and gyroscope.
   ******************************************************************************
   */
 
@@ -78,7 +78,6 @@ static void LSM9DS1_LowLevel_Init(void);
   * @{
   */
 
-
 /**
   * @brief  Set LSM9DS1 Initialization.
   * @param  LSM9DS1_Config_Struct: pointer to a LSM9DS1_Config_TypeDef structure 
@@ -87,6 +86,7 @@ static void LSM9DS1_LowLevel_Init(void);
   */
 void LSM9DS1_Init(LSM9DS1_InitTypeDef *LSM9DS1_InitStruct)
 {
+
 
 //	LSM9DS1_Read(&who_am_i, LSM9DS1_WHO_AM_I_ADDR, 1);
 	//printf("WHO AM I: %d \n", who_am_i);
@@ -104,11 +104,9 @@ void LSM9DS1_Init(LSM9DS1_InitTypeDef *LSM9DS1_InitStruct)
   /* Write value to CTRL_REG6_XL regsister */
   LSM9DS1_Write(&ctrl6, LSM9DS1_CTRL_REG6_XL, 1);
 	
-	
 	uint8_t ctrl1 = 0x00;
 	ctrl1 = (uint8_t) (LSM9DS1_InitStruct->G_Power_Mode_Output_DataRate | LSM9DS1_InitStruct->G_Full_Scale);
 	LSM9DS1_Write(&ctrl1, LSM9DS1_CTRL_REG1_G, 1);
-	
 	
 	uint8_t ctrl5 = 0x00;
 	
@@ -127,13 +125,10 @@ void LSM9DS1_Init(LSM9DS1_InitTypeDef *LSM9DS1_InitStruct)
 	/* Write value to CTRL_REG4_G register */
 	LSM9DS1_Write(&ctrl4, LSM9DS1_CTRL_REG4, 1);
 	
-	
-	
   uint8_t tmpreg;
   tmpreg = (uint8_t)0x03;
 	/* Enable Interrupts on INT1 for Accelerometer and Gyroscope */
 	LSM9DS1_Write(&tmpreg, LSM9DS1_INT1_CTRL, 1);
-	
 }
 
 
@@ -216,7 +211,7 @@ void LSM9DS1_ReadXL(int32_t* out)
 {
   uint8_t buffer[6];
   uint8_t crtl, i = 0x00;
-   
+	
   LSM9DS1_Read(&crtl, LSM9DS1_CTRL_REG6_XL, 1);  //ctrl will recieve the data from the reg
 	
 	LSM9DS1_Read(buffer, LSM9DS1_OUT_X_H_XL, 1);
@@ -281,6 +276,8 @@ void LSM9DS1_ReadG(int32_t* out)
    
   LSM9DS1_Read(&crtl, LSM9DS1_CTRL_REG1_G, 1);  //ctrl will recieve the data from the reg
 	
+	//Read axis data
+
 	LSM9DS1_Read(buffer, LSM9DS1_OUT_X_H_G, 1);
 	LSM9DS1_Read(buffer+1, LSM9DS1_OUT_X_L_G, 1);
 	

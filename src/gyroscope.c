@@ -8,7 +8,8 @@
 #include "lsm9ds1.h"
 #include "moving_average.h"
 #include "osObjects.h"
-//#include "viterbi.h"
+#include "update_pos.h"
+
 
 #define NUM_CALIBRATION 20
 #define X_OFFSET 50
@@ -42,7 +43,8 @@ float combined_roll;
 float combined_pitch;
 
 int state = 0;
-int heading_state = 0;
+uint8_t heading_state = 0;
+
 int counter = 0;
 
 typedef struct {
@@ -79,6 +81,13 @@ float roll_data[buffer_size];
 FilterBuffer g_yaw_buffer;
 float yaw_data[buffer_size];
 
+//#define NUM_POSITION_READINGS 100
+//#define initial_heading 0
+//#define initial_position 0
+//#define step_distance 1
+//char heading[NUM_POSITION_READINGS];
+//char distance[NUM_POSITION_READINGS];
+//int position_reading = 1;
 
 /* Helper Functions */
 void calculate_gyro_offsets(void);
@@ -105,11 +114,12 @@ void init_gyroscope() {
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE); //CHANGE?
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE); // Enable
 
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource0);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource1);
 
 	EXTI_InitTypeDef exti_init;
 
-	exti_init.EXTI_Line = EXTI_Line0; //EXTI Line 0
+	exti_init.EXTI_Line = EXTI_Line1; //EXTI Line 0
+
 	exti_init.EXTI_LineCmd = ENABLE; //Enable
 	exti_init.EXTI_Mode = EXTI_Mode_Interrupt; //Use for interupts
 	exti_init.EXTI_Trigger = EXTI_Trigger_Rising;
@@ -119,7 +129,8 @@ void init_gyroscope() {
 	/* setup nvic */
 	NVIC_InitTypeDef nvic_init;
 
-	nvic_init.NVIC_IRQChannel = EXTI0_IRQn; //EXTIO
+	nvic_init.NVIC_IRQChannel = EXTI1_IRQn; //EXTIO
+
 	nvic_init.NVIC_IRQChannelCmd = ENABLE;
 	nvic_init.NVIC_IRQChannelPreemptionPriority = 0x00;
 	nvic_init.NVIC_IRQChannelSubPriority = 0x01;
@@ -146,6 +157,9 @@ void init_gyroscope() {
 	
 	step = STANDING;
 	waiting = 0;
+	
+//	heading[0] = initial_heading;
+//	distance[0] = initial_position;
 }
 
 void calculate_gyro_offsets(void){
@@ -164,11 +178,11 @@ void calculate_gyro_offsets(void){
 	//	printf("Offset :G	 Pitch: %f Roll: %f	Yaw: %f\n", G_PITCH_OFFSET, G_ROLL_OFFSET, G_YAW_OFFSET);
 }
 
-void EXTI0_IRQHandler(void) {
+void EXTI1_IRQHandler(void) {
     /* Make sure that interrupt flag is set */
 		osSignalSet(gyroscope_thread, SIGNAL_GYROSCOPE);
-    if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
-			EXTI_ClearITPendingBit(EXTI_Line0); 			/* Clear interrupt flag */
+    if (EXTI_GetITStatus(EXTI_Line1) != RESET) {
+			EXTI_ClearITPendingBit(EXTI_Line1); 			/* Clear interrupt flag */
     }
 }
 
@@ -225,16 +239,18 @@ void Gyroscope(void const *argument) {
 			g_yaw += G_YAW_OFFSET;
 		}
 
-		//Scale output before output
+		//Scales output to actual angles
 		g_pitch = g_pitch * G_SCALER;
 		g_roll = g_roll * G_SCALER;
 		g_yaw = g_yaw* G_SCALER;
 
+		//Runge-Kutta integration for extra precision
 		g_pitch_sum = g_pitch_sum + (DT/6)*(past_g_out_pitch[0] + 2*past_g_out_pitch[1] + 2*past_g_out_pitch[2] + g_pitch);
 		g_roll_sum = g_roll_sum + (DT/6)*(past_g_out_roll[0] + 2*past_g_out_roll[1] + 2*past_g_out_roll[2] + g_roll);
 		g_yaw_sum = g_yaw_sum + (DT/6)*(past_g_out_yaw[0] + 2*past_g_out_yaw[1] + 2*past_g_out_yaw[2] + g_yaw);
 
 
+		//Keep past 3 observations (Used for integration)
 		if(counter<3)
 		{
 			past_g_out_pitch[counter] = g_pitch;
@@ -255,16 +271,24 @@ void Gyroscope(void const *argument) {
 			past_g_out_yaw[1] = past_g_out_yaw[2];
 			past_g_out_yaw[2] = g_yaw;
 		}
-
+		//
+		//=========================		
+		//	7	|
+		//	-
+		//	6	|
+		//	-
+		//	5	|
+		//Increase the state if clockwise rotation is measured
 		if(45<g_yaw_sum){
 				state++;
 				g_yaw_sum = 0;
 			}
-
+		//Decrease the state if anticlockwise rotation is measured
 		else if(-45>g_yaw_sum){
 			state--;
 			g_yaw_sum = 0;
 		}
+		//Reset the state when reaching abs(state) = 8
 		if(state == 8 || state == -8)
 		{
 			state = 0;
@@ -308,9 +332,13 @@ void Gyroscope(void const *argument) {
 			case STANDING:
 				if (waiting == 0) {
 					if (g_roll > RISING_STEP_THRESHOLD) {
-						//printf("stepping direction %d\n", heading_state);
-						step = STEPPING;
-						waiting = STEP_DELAY;
+							printf("stepping direction %d\n", heading_state);\
+							update_pos(heading_state);
+//						heading[position_reading] = heading_state;
+//						distance[position_reading] = step_distance;
+//						position_reading++; //increment index to store next reading
+							step = STEPPING;
+							waiting = STEP_DELAY;	
 					}
 				}
 				else {
@@ -321,7 +349,7 @@ void Gyroscope(void const *argument) {
 				if (waiting == 0) {
 					if (g_roll < FALLING_STEP_THRESHOLD) {
 						step = STANDING;
-						//printf("standing %d\n", heading_state);
+						printf("standing %d\n", heading_state);
 						waiting = STEP_DELAY;
 					}
 				}
@@ -331,6 +359,6 @@ void Gyroscope(void const *argument) {
 				break;
 		}
 		//printf("\tRoll, %f,,\n", g_roll);
-		printf("%s: %d\n", PRINT_STATE[step], heading_state);
+		//printf("%s: %d\n", PRINT_STATE[step], heading_state);
 	}
 }
