@@ -1,12 +1,11 @@
 #include "update_pos.h"
+#include <stdio.h>
 #include "cc2500.h"
 
-#define NUM_STEPS 100
+#define TOTAL_STEPS 100
 
-//uint8_t distance = 0;
-//uint8_t dist_last = 0;
-uint8_t direction[NUM_STEPS];
-uint8_t distance[NUM_STEPS];
+uint8_t direction[TOTAL_STEPS];
+uint8_t distance[TOTAL_STEPS];
 int8_t steps = -1;
 
 /*!
@@ -25,6 +24,10 @@ void update_pos(uint8_t new_direction){
  Function handles the sending of data
 */
 int send_pos(){
+	for (int i = 0; i <= steps; i++) {
+		printf("%d: dir: %d, dist: %d\n", i, direction[i], distance[i]);
+	}
+	
 	CC2500_Write(direction, CC2500_FIFO_REG, 1);
 	CC2500_Write(distance, CC2500_FIFO_REG, 1);
 	return 0;
