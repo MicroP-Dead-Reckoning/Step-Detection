@@ -333,7 +333,7 @@ void Gyroscope(void const *argument) {
 				if (waiting == 0) {
 					if (g_roll > RISING_STEP_THRESHOLD) {
 							printf("stepping direction %d\n", heading_state);\
-							send_pos(heading_state);
+							update_pos(heading_state);
 //						heading[position_reading] = heading_state;
 //						distance[position_reading] = step_distance;
 //						position_reading++; //increment index to store next reading

@@ -1,15 +1,10 @@
-#define osObjectsPublic                     // define objects in main module
-#include "osObjects.h"                      // RTOS object definitions
+#ifndef _INCLUDE_UPDATE_POS_H_
+#define _INCLUDE_UPDATE_POS_H_
+
 #include "stm32f4xx.h"                  		// Device header
 #include "stm32f4xx_conf.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include "cc2500.h"
-#include "gyroscope.h"
 
-extern uint8_t distance;
-extern uint8_t dist_last;
-extern uint8_t dir_last;
+void update_pos(uint8_t new_direction);
+int send_pos(void);
 
-
-int send_pos(uint8_t direction);
+#endif // _INCLUDE_UPDATE_POS_H_
