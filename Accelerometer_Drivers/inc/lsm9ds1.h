@@ -113,13 +113,13 @@ typedef struct
 #define LSM9DS1_SPI_CS_GPIO_PORT          GPIOA                       /* GPIOA */
 #define LSM9DS1_SPI_CS_GPIO_CLK           RCC_AHB1Periph_GPIOA
 
-#define LSM9DS1_SPI_INT1_PIN              GPIO_Pin_0                  /* PD.00 */
+#define LSM9DS1_SPI_INT1_PIN              GPIO_Pin_1                  /* PD.00 */
 #define LSM9DS1_SPI_INT1_GPIO_PORT        GPIOD                       /* GPIOD */
 #define LSM9DS1_SPI_INT1_GPIO_CLK         RCC_AHB1Periph_GPIOD
-#define LSM9DS1_SPI_INT1_EXTI_LINE        EXTI_Line0									
+#define LSM9DS1_SPI_INT1_EXTI_LINE        EXTI_Line1									
 #define LSM9DS1_SPI_INT1_EXTI_PORT_SOURCE EXTI_PortSourceGPIOD
-#define LSM9DS1_SPI_INT1_EXTI_PIN_SOURCE  EXTI_PinSource0
-#define LSM9DS1_SPI_INT1_EXTI_IRQn        EXTI0_IRQn 
+#define LSM9DS1_SPI_INT1_EXTI_PIN_SOURCE  EXTI_PinSource1
+#define LSM9DS1_SPI_INT1_EXTI_IRQn        EXTI1_IRQn 
 
 #define LSM9DS1_SPI_INT2_PIN              GPIO_Pin_6                  /* PD.06 */
 #define LSM9DS1_SPI_INT2_GPIO_PORT        GPIOD                       /* GPIOD */
