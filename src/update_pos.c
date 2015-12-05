@@ -30,9 +30,11 @@ int send_pos(){
 	for (int i = 0; i <= steps; i++) {
 		printf("%d: dir: %d, dist: %d\n", i, direction[i], distance[i]);
 		CC2500_Write(&direction[i], CC2500_FIFO_REG, 1);
+		osDelay(500);
 		CC2500_Write(&distance[i], CC2500_FIFO_REG, 1);
-		osDelay(50);
+		osDelay(500);
 	}
+	osDelay(500);
 	CC2500_Write(DONE, CC2500_FIFO_REG, 3);
 	return 0;
 }

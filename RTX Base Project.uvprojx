@@ -462,6 +462,11 @@
               <FileType>5</FileType>
               <FilePath>.\src\update_pos.h</FilePath>
             </File>
+            <File>
+              <FileName>push_button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\push_button.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
