@@ -51,14 +51,10 @@ void setup_button() {
 }
 
 void EXTI0_IRQHandler(void) {
-	static uint32_t transmit = 0;
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 		EXTI_ClearITPendingBit(EXTI_Line0); 			/* Clear interrupt flag */
 	}
-	if (transmit == 1) {
-		return;
-	}
-	transmit = 1;
 	send_pos();
 	printf("Hello World\n");
+	for (uint32_t i = 0; i < 1680000; i++);
 }
