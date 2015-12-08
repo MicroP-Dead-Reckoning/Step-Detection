@@ -12,7 +12,7 @@
 #define CC2500_CS_LOW()       GPIO_ResetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN)
 #define CC2500_CS_HIGH()      GPIO_SetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN)
 
-/* helper functions */
+ mode whether/* helper functions */
 static uint8_t CC2500_SendByte(uint8_t byte);
 void CC2500_REG_INIT(void);
 uint8_t CC2500_Read_SRX(void);

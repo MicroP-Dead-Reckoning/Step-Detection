@@ -7,6 +7,12 @@
 #include "stm32f4xx_conf.h"
 #include "update_pos.h"
 
+/*!
+	\brief Sets up the user button the stm407 board
+
+	Sets up the `User Button` on the STM407 discoveryboard, 
+	including Power, GPIO, NVIC and EXTI setup
+ */
 void setup_button() {
 	
 	GPIO_InitTypeDef gpio_init_s;
@@ -50,6 +56,13 @@ void setup_button() {
 	NVIC_Init(&nvic_init);
 }
 
+/*!
+ *  \brief User Button Interrupt Handler. Begins Transmission
+ *  
+ *  calls the `send_pos` function and then waits. Originally, we intended to
+ *  signal a thread which would then start sending data. However, due to time 
+ *  constraints we elected to use a fast and dirty solution
+ */	
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 		EXTI_ClearITPendingBit(EXTI_Line0); 			/* Clear interrupt flag */

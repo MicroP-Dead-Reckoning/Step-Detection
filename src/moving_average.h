@@ -1,8 +1,6 @@
-// moving average filter
+//! a moving average filter of adjustable length
 #ifndef __INCLUDE_MOVING_AVERAGE_H_
 #define __INCLUDE_MOVING_AVERAGE_H_
-
-#define BUFF_SIZE 10
 
 typedef struct {
 	int size;
@@ -13,12 +11,15 @@ typedef struct {
 } FilterBuffer;
 
 /*!
-	adds a value to the filter
+	\brief	adds a value to the filter
+	\param	*buf the FilterBuffer to add f to
+	\param	f newly sampled data 
  */
 float add_value(FilterBuffer *buf, float f);
 
 /*!
-	returns average value
+	\brief	returns average value
+	\param	*buf the buffer for which average is needed 
  */
 float get_value(FilterBuffer *buf);
 

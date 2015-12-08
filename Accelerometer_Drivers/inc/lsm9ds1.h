@@ -425,16 +425,43 @@ typedef struct
 /** @defgroup STM32F4_DISCOVERY_LSM9DS1_Exported_Functions
   * @{
   */ 
+/**
+  * @brief  Set LSM9DS1 Initialization.
+  * @param  LSM9DS1_Config_Struct: pointer to a LSM9DS1_Config_TypeDef structure 
+  *         that contains the configuration setting for the LSM9DS1. Also enable interrupts
+  * @retval None
+  */
 void LSM9DS1_Init(LSM9DS1_InitTypeDef *LSM9DS1_InitStruct);
-//void LSM9DS1_InterruptConfig(LSM9DS1_InterruptConfigTypeDef *LSM9DS1_InterruptConfigStruct);
-//void LSM9DS1_FilterConfig(LSM9DS1_FilterConfigTypeDef *LSM9DS1_FilterConfigStruct);
 void LSM9DS1_LowpowerCmd(uint8_t LowPowerMode);
 void LSM9DS1_FullScaleCmd(uint8_t FS_value);
 void LSM9DS1_DataRateCmd(uint8_t DataRateValue);
 void LSM9DS1_RebootCmd(void);
+
+/**
+  * @brief  Read LSM9DS1 output register, and calculate the acceleration 
+  * @param  s16 buffer to store data
+  * @retval None
+  */
 void LSM9DS1_ReadXL(int32_t* out);
 void LSM9DS1_ReadG(int32_t* out);
+
+/**
+  * @brief  Writes one byte to the LSM9DS1.
+  * @param  pBuffer : pointer to the buffer  containing the data to be written to the LSM9DS1.
+  * @param  WriteAddr : LSM9DS1's internal address to write to.
+  * @param  NumByteToWrite: Number of bytes to write.
+  * @retval None
+  */
 void LSM9DS1_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite);
+
+
+/**
+  * @brief  Reads a block of data from the LSM9DS1.
+  * @param  pBuffer : pointer to the buffer that receives the data read from the LSM9DS1.
+  * @param  ReadAddr : LSM9DS1's internal address to read from.
+  * @param  NumByteToRead : number of bytes to read from the LSM9DS1.
+  * @retval None
+  */
 void LSM9DS1_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
 
 /* USER Callbacks: This is function for which prototype only is declared in

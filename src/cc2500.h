@@ -139,10 +139,52 @@ typedef enum {
 
 
 /* functions */
+/*!
+ *  \brief sets up the CC2500
+ *  \param mode receiving or transmitting
+ *
+ *  This function calls sets up the SPI and GPIO (pins shown above) to begin
+ *  using the CC2500
+ */
 int CC2500_SPI_INIT(CC2500_TXRX_MODE mode);
+
+/*!
+ *  \brief sets up interrupts on CC2500
+ *  
+ *  Configures the NVIC and EXTI on the discovery board to properly interupt
+ *  when data is received
+ */
 void CC2500_INT_INIT(void);
+
+/*!
+ *  \brief sends SPI commands to read data from CC2500
+ *  \param *pBuffer where to store read data
+ *  \param ReadAddr Which register on the CC2500 to read
+ *  \param NumByteToRead How many bytes to read
+ *
+ *  reads `NumByteToRead` bytes from `ReadAddr` into `pBuffer`
+ */
 void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
+
+/*!
+ *  \brief sends SPI commands to read data from CC2500 Status Register
+ *  \param *pBuffer where to store read data
+ *  \param ReadAddr Which register on the CC2500 to read
+ *
+ *  Due to the way CC2500 works, if we read a status register in non-burst mode,
+ *  we get the normal register value unless we set the burst bit. However, this
+ *  only reads from one status register at a time
+ */
 void CC2500_Read_SR(uint8_t* pBuffer, uint8_t ReadAddr);
+
+/*!
+ *  \brief sends SPI commands to write data from CC2500
+ *  \param *pBuffer data to write
+ *  \param WriteAddr Which register on the CC2500 to write to
+ *  \param NumByteToRead How many bytes to writed
+ *
+ *  Writes `NumByteToRead` bytes from `WriteAddr` into `pBuffer`
+ */
 void CC2500_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite);
 void CC2500_Read_RX(uint8_t* pBuffer, uint16_t NumByteToRead);
 #endif // _INCLUDE_CC2500_H_
